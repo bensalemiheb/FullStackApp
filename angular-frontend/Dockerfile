@@ -1,29 +1,28 @@
-# Use official Node.js image with a compatible version
-FROM node:18 AS builder
+# Stage 1: Build the Angular application
+FROM node:18.20.2 AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Install Angular CLI globally
-RUN npm install -g @angular/cli@latest
+# Install Angular CLI
+RUN npm install -g @angular/cli
 
-# Copy package.json and package-lock.json to the working directory
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install project dependencies
+# Install dependencies
 RUN npm install
 
-# Copy the rest of the application code
+# Copy the rest of the application
 COPY . .
 
-# Build the Angular project
+# Build the Angular application in production mode
 RUN ng build --prod
 
-# Use Nginx image as the base image for serving the Angular application
+# Stage 2: Serve the Angular application using Nginx
 FROM nginx:alpine
 
-# Copy built Angular app from the builder stage to the Nginx image
-COPY --from=builder /app/dist/* /usr/share/nginx/html/
+# Copy the built Angular app from the builder stage
+COPY --from=builder /app/dist/angular-frontend /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
