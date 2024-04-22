@@ -1,5 +1,5 @@
-# Use official Node.js image with the specific version
-FROM node:12.22.9 AS builder
+# Use official Node.js image with a compatible version
+FROM node:18 AS builder
 
 # Set working directory
 WORKDIR /app
